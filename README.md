@@ -6,5 +6,7 @@
 
 #django framework 
 
+#chatbot 서비스 로직 : blog/utils.py
+
 python manage.py runserver 
 
