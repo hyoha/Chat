@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Blog 답변</title>
+</head>
+<body>
+    <h1>Blog 답변</h1>
+    <p><strong>질문:</strong> {{ question }}</p>
+    <p><strong>답변:</strong></p>
+    <pre>{{ answer }}</pre>
+    <br>
+    <a href="{% url 'blog' %}">다시 질문하기</a>
+</body>
+</html>

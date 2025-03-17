@@ -1,0 +1,22 @@
+Invalid HTTP_HOST header: '192.168.35.70:8000'. You may need to add '192.168.35.70' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Workspace\my_model_project\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Workspace\my_model_project\.venv\lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "C:\Workspace\my_model_project\.venv\lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Workspace\my_model_project\.venv\lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '192.168.35.70:8000'. You may need to add '192.168.35.70' to ALLOWED_HOSTS.
+Invalid HTTP_HOST header: '192.168.35.70:8000'. You may need to add '192.168.35.70' to ALLOWED_HOSTS.
+Traceback (most recent call last):
+  File "C:\Workspace\my_model_project\.venv\lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Workspace\my_model_project\.venv\lib\site-packages\django\utils\deprecation.py", line 133, in __call__
+    response = self.process_request(request)
+  File "C:\Workspace\my_model_project\.venv\lib\site-packages\django\middleware\common.py", line 48, in process_request
+    host = request.get_host()
+  File "C:\Workspace\my_model_project\.venv\lib\site-packages\django\http\request.py", line 150, in get_host
+    raise DisallowedHost(msg)
+django.core.exceptions.DisallowedHost: Invalid HTTP_HOST header: '192.168.35.70:8000'. You may need to add '192.168.35.70' to ALLOWED_HOSTS.

@@ -1,0 +1,411 @@
+{% load static %}
+
+< !DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>두드림 소프트웨어 소개 및 챗봇</title>
+    <style>
+        /* --- 기업소개 홈페이지 기본 스타일 --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        header {
+            background: #222;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+        header h1 {
+            font-size: 28px;
+        }
+        nav {
+            margin-top: 10px;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+        }
+        nav ul li {
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+        nav ul li a:hover {
+            color: #03a9f4;
+        }
+        .container {
+            margin-top: 100px;  /* 헤더 높이 만큼 여백 */
+        }
+        .hero {
+            background: url("{% static 'blog/images/hero.jpg' %}") no-repeat center center/cover;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 36px;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        /* 이미지 메뉴: 각 카테고리로 이동하는 이미지들 */
+        .image-menu {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .image-menu a {
+            margin: 0 10px;
+            display: inline-block;
+        }
+        .image-menu img {
+            width: 250px;
+            max-width: 90%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease;
+        }
+        .image-menu img:hover {
+            transform: scale(1.05);
+        }
+        /* 각 카테고리 섹션 */
+        .section {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .section:nth-child(even) {
+            background: #f7f7f7;
+        }
+        .section h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .section p {
+            font-size: 16px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        footer {
+            background: #222;
+            color: #ccc;
+            text-align: center;
+            padding: 20px 0;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* --- Floating Chatbot 스타일 --- */
+        #chat-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #2196f3, #03a9f4);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.2);
+            z-index: 9999;
+            transition: transform 0.2s ease;
+        }
+        #chat-btn:hover {
+            transform: scale(1.05);
+        }
+        #chat-window {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 300px;
+            max-height: 400px;
+            background: #fff;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        #chat-header {
+            background: linear-gradient(60deg, #2196f3, #03a9f4);
+            color: #fff;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: bold;
+        }
+        #chat-header .title {
+            font-size: 16px;
+        }
+        #chat-header .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #chat-header .close-btn:hover {
+            opacity: 0.8;
+        }
+        #progress-bar-container {
+            position: relative;
+            height: 6px;
+            width: 100%;
+            background-color: #ddd;
+            display: none;
+            overflow: hidden;
+        }
+        #progress-bar {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(to right, #4caf50 30%, #ddd 30%);
+            background-size: 200% 100%;
+            animation: indefiniteProgress 2s linear infinite;
+        }
+        @keyframes indefiniteProgress {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f9f9f9;
+            font-family: 'Roboto', sans-serif;
+            font-size: 14px;
+        }
+        #chat-input {
+            display: flex;
+            border-top: 1px solid #ddd;
+            padding: 8px;
+            gap: 6px;
+        }
+        #chat-input input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            outline: none;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        #chat-input button {
+            background: #2196f3;
+            color: #fff;
+            border: none;
+            padding: 0 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s ease;
+        }
+        #chat-input button:hover {
+            background: #1976d2;
+        }
+        .message-user,
+        .message-bot {
+            margin-bottom: 8px;
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            clear: both;
+            display: inline-block;
+        }
+        .message-user {
+            background-color: #cce5ff;
+            float: right;
+            margin-right: 10px;
+        }
+        .message-bot {
+            background-color: #e2e2e2;
+            float: left;
+            margin-left: 10px;
+        }
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        #chat-messages::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 기업소개 홈페이지 내용 -->
+<header>
+    <h1>두드림 소프트웨어 개발</h1>
+    <nav>
+        <ul>
+            <li><a href="#ai">AI</a></li>
+            <li><a href="#website">Website 제작</a></li>
+            <li><a href="#robot">Robot</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="container">
+    <!-- Hero 섹션 (옵션) -->
+    <section class="hero">
+        반응형 웹사이트 제작
+    </section>
+
+    <!-- 이미지 메뉴 섹션: 각 카테고리로 이동하는 링크 -->
+    <div class="image-menu">
+        <a href="#ai"><img src="{% static 'blog/images/1.jpg' %}" alt="AI"></a>
+        <a href="#website"><img src="{% static 'blog/images/2.jpg' %}" alt="Website 제작"></a>
+        <a href="#robot"><img src="{% static 'blog/images/3.jpg' %}" alt="Robot"></a>
+    </div>
+
+    <!-- 각 카테고리 섹션 -->
+    <section id="ai" class="section">
+        <h2>AI</h2>
+        <p>우리 기업의 AI 기술은 최신 머신러닝 알고리즘과 인공지능 솔루션을 바탕으로 혁신적인 제품과 서비스를 제공합니다.
+           데이터 분석, 자연어 처리, 이미지 인식 등 다양한 분야에서 활용되어 비즈니스 경쟁력을 강화합니다.</p>
+    </section>
+
+    <section id="website" class="section">
+        <h2>Website 제작</h2>
+        <p>전문 웹 개발팀이 최신 웹 기술을 활용하여 사용자 친화적인 웹사이트를 제작합니다.
+           반응형 디자인과 SEO 최적화를 통해 고객에게 최상의 온라인 경험을 선사합니다.</p>
+    </section>
+
+    <section id="robot" class="section">
+        <h2>Robot</h2>
+        <p>첨단 로봇 기술을 기반으로 한 자동화 솔루션을 제공합니다.
+           산업용 로봇부터 서비스 로봇까지, 혁신적인 제어 시스템과 센서 기술로 생산성을 극대화합니다.</p>
+    </section>
+</div>
+
+<footer>
+    <p>&copy; 2025 우리 기업. All Rights Reserved.</p>
+</footer>
+
+<!-- Floating Chatbot (페이지 하단에 항상 떠 있음) -->
+<button id="chat-btn">💬</button>
+<div id="chat-window">
+    <div id="chat-header">
+        <span class="title">챗봇</span>
+        <button class="close-btn" id="close-btn">×</button>
+    </div>
+    <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="chat-input">
+        <input type="text" id="chat-question" placeholder="질문 입력..." />
+        <button id="send-btn">전송</button>
+    </div>
+</div>
+
+{% csrf_token %}
+
+<script>
+    const chatBtn = document.getElementById('chat-btn');
+    const chatWindow = document.getElementById('chat-window');
+    const closeBtn = document.getElementById('close-btn');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatQuestion = document.getElementById('chat-question');
+    const sendBtn = document.getElementById('send-btn');
+    const progressBarContainer = document.getElementById('progress-bar-container');
+
+    chatBtn.addEventListener('click', () => {
+        if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+            chatWindow.style.display = 'flex';
+        } else {
+            chatWindow.style.display = 'none';
+        }
+    });
+
+    closeBtn.addEventListener('click', () => {
+        chatWindow.style.display = 'none';
+    });
+
+    chatQuestion.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            sendQuestion();
+        }
+    });
+
+    sendBtn.addEventListener('click', sendQuestion);
+
+    function sendQuestion() {
+        const question = chatQuestion.value.trim();
+        if (!question) return;
+        appendMessage("user", question);
+        chatQuestion.value = "";
+        progressBarContainer.style.display = "block";
+
+        fetch("{% url 'blog_ask' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": getCookie('csrftoken'),
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams({ 'question': question })
+        })
+        .then(response => response.json())
+        .then(data => {
+            progressBarContainer.style.display = "none";
+            appendMessage("bot", data.answer);
+        })
+        .catch(err => {
+            console.error("Error:", err);
+            progressBarContainer.style.display = "none";
+            appendMessage("bot", "오류가 발생했습니다.");
+        });
+    }
+
+    function appendMessage(sender, text) {
+        const div = document.createElement('div');
+        div.className = (sender === 'user') ? 'message-user' : 'message-bot';
+        div.textContent = text;
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+</body>
+</html>
